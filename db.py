@@ -2,8 +2,8 @@ import psycopg2
 import os
 import requests
 from psycopg2.extras import RealDictCursor
-from pymongo import MongoClient
 
+#TODO: Move this class to utils repo
 class DatabasePostgres:
     def __init__(self, config: dict):
         self.user = config['user']
@@ -42,28 +42,3 @@ class DatabasePostgres:
             row_id = cur.fetchone()
         conn.commit()
         return row_id
-
-class DatabaseMongo:
-    def __init__(self, config: dict):
-        self.user = config['user']
-        self.password = config['password']
-        self.host = config['host']
-        self.port = config['port']
-        self.dbname = config['dbname']
-        self.connection = None
-
-    def connect(self):
-        if self.connection is None:
-            connection = MongoClient(
-                    host = self.host,
-                    port = self.port,
-                    username = self.user,
-                    password = self.password )
-            self.connection = connection
-        return self.connection
-
-    def insert(self, collection: str, asset: list) -> None:
-        conn = self.connect()
-        coll = conn[self.dbname][collection]
-        coll.insert_one(asset)
-
